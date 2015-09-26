@@ -25,7 +25,7 @@ int main() {
             {1,   1,  9,  96},
             {12,  3,  18, 96},
             {42,  3,  04, 96},
-            {34,  3,  21, 960},
+            {34,  3,  21, 96},
             {5,   4,  10, 96},
             {255, 5,  9,  96},
             {16,  6,  26, 96},
@@ -39,14 +39,42 @@ int main() {
             {24,  12, 14, 94}
     };
 
-    FILE *file;
+    char names[2][10] = {"Beckmann", "Liao"};
 
-    // WRITE HEADER
+    FILE *file = fopen("birthdays.bin", "wb+");
+
+    fputc(90, file);
+    fputc(90, file);
+
+    for (int i = 0; i < 2; i++)
+    {
+        for (int j = 0; j < 10; j++)
+        {
+            fputc(names[i][j], file);
+        }
+    }
+
+    fputc(2, file);
+
+    char className[7] = {"EE2263"};
+    for (int i = 0; i < 7; i++)
+    {
+        fputc(className[i], file);
+    }
+
+    fputc(0, file);
+    fputc(17, file);
+
+    /* End of Header */
+
     int month = 0;
 
     for (int i = 0; i < 17; i++)
     {
+        /* Write id */
         fputc(class[i][0], file);
+
+        /* Write month */
         int tempMonth = class[i][1] - month;
         switch (tempMonth)
         {
@@ -60,21 +88,54 @@ int main() {
                 break;
             case 2:
                 bit2byte(1, file);
-                bit2byte(0 , file);
+                bit2byte(0, file);
                 break;
             case 3:
                 bit2byte(1, file);
                 bit2byte(1, file);
                 break;
             default:
-                //ERROR
+                //TODO ERROR
                 break;
         }
 
         month = class[i][1];
 
-        int yearOffset = 
+        /* Write day */
+        int day = class[i][2];
+        bit2byte(day / 16, file);
+        bit2byte(day % 16 / 8, file);
+        bit2byte(day % 8 / 4, file);
+        bit2byte(day % 4 / 2, file);
+        bit2byte(day % 2, file);
+
+        /* Write year */
+        int yearOffset = 94 - class[i][3];
+        switch (yearOffset)
+        {
+            case 0:
+                bit2byte(0, file);
+                bit2byte(0, file);
+                break;
+            case 1:
+                bit2byte(0, file);
+                bit2byte(1, file);
+                break;
+            case 2:
+                bit2byte(1, file);
+                bit2byte(0, file);
+                break;
+            case 3:
+                bit2byte(1, file);
+                bit2byte(1, file);
+                break;
+            default:
+                //TODO ERROR
+                break;
+        }
     }
+
+    // TODO dump remaining data to file, close file.
 
         return 0;
 }
