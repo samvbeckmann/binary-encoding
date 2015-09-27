@@ -1,25 +1,29 @@
 #include <stdio.h>
 #include <math.h>
 
-void bit2byte(int bit, FILE *file) {
+int bit2byte(char bit, FILE *file) {
     static char output;
     static char index;
 
-    if (bit) {
-        output = (output | (char) pow(2, 15 - index));
-    }
+    index --;
+    output = output | bit << index;
 
-    index ++;
-    if (index > 15) {
+//    if (bit) {
+//        output = (output | (char) pow(2, 15 - index));
+//    }
+
+    if (index == 0) {
         fputc(output, file);
-        index = 0;
+        index = 8;
         output = 0;
-    }
+        return 1;
+    } else
+        return 0;
 }
 
 int main() {
 
-    int class[17][4] = {
+    unsigned char class[17][4] = {
             {20,  1,  10, 96},
             {18,  1,  13, 97},
             {1,   1,  9,  96},
@@ -56,7 +60,7 @@ int main() {
 
     fputc(2, file);
 
-    char className[7] = {"EE2263"};
+    char className[8] = {"ECE2263"};
     for (int i = 0; i < 7; i++)
     {
         fputc(className[i], file);
@@ -67,7 +71,7 @@ int main() {
 
     /* End of Header */
 
-    int month = 0;
+    unsigned char month = 0;
 
     for (int i = 0; i < 17; i++)
     {
@@ -75,7 +79,7 @@ int main() {
         fputc(class[i][0], file);
 
         /* Write month */
-        int tempMonth = class[i][1] - month;
+        unsigned char tempMonth = class[i][1] - month;
         switch (tempMonth)
         {
             case 0:
@@ -95,22 +99,22 @@ int main() {
                 bit2byte(1, file);
                 break;
             default:
-                //TODO ERROR
+                //TODO Handler - increment by three, and write day as blank
                 break;
         }
 
         month = class[i][1];
 
         /* Write day */
-        int day = class[i][2];
-        bit2byte(day / 16, file);
-        bit2byte(day % 16 / 8, file);
-        bit2byte(day % 8 / 4, file);
-        bit2byte(day % 4 / 2, file);
-        bit2byte(day % 2, file);
+        unsigned char day = class[i][2];
+        bit2byte(day / (unsigned char) 16, file);
+        bit2byte(day % (unsigned char) 16 / (unsigned char) 8, file);
+        bit2byte(day % (unsigned char) 8 / (unsigned char) 4, file);
+        bit2byte(day % (unsigned char) 4 / (unsigned char) 2, file);
+        bit2byte(day % (unsigned char) 2, file);
 
         /* Write year */
-        int yearOffset = 94 - class[i][3];
+        unsigned char yearOffset = (unsigned char) 94 - class[i][3];
         switch (yearOffset)
         {
             case 0:
@@ -135,7 +139,9 @@ int main() {
         }
     }
 
-    // TODO dump remaining data to file, close file.
+    while (!bit2byte(0,file));
+
+    // TODO close file.
 
         return 0;
 }
