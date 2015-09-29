@@ -58,7 +58,7 @@ void encode() {
         }
     }
 
-    fputc(2, file);
+    fputc(1, file);
 
     char className[8] = {"ECE2263"};
     for (i = 0; i < 7; i++)
