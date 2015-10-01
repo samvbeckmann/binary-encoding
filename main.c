@@ -1,6 +1,8 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include "decode.h"
 #include "encode.h"
+#include "decode3.h"
 
 extern void encode();
 extern void decode();
@@ -18,4 +20,6 @@ void main()
     	decode3();
     } else
         decode();
+
+    system("pause");
 }

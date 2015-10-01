@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include "decode.h"
 
-extern char getBits();
+extern unsigned char getBits(unsigned char bits, unsigned char data[]);
 
 void decode3()
 {
@@ -23,7 +23,7 @@ void decode3()
     printf("Class: %.*s\n", 7, header + 25);
     printf("Num Bdays: %u\n", header[33]);
 
-    int size = (int) (3*header[33]) + 1;
+    int size = (3*header[33]) + 1;
 
     unsigned char bdays[size];
     fread(bdays, 1, (unsigned) size, fp);
